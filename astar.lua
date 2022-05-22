@@ -22,7 +22,13 @@ function AStar:newFromFile(o, filename)
         for i = 1, #line do
             local c = line:sub(i,i)
             local cost = c == '#' and 2 or 1
-            self.maze:insertNode(cost)
+            local node = self.maze:insertNode(cost)
+
+            if c == '@' then
+                self.start_node = node
+            elseif c == '!' then
+                self.goal_node = node
+            end
         end
         self.maze.dimensions[1] = #line
     end
@@ -39,8 +45,17 @@ function AStar:serialize()
     local c = 1
 
     for i, node in ipairs(self.maze.data) do
-        -- TODO print start and goal
-        s[c] = node.cost == 2 and '#' or 't'
+        if node == self.start_node then
+            s[c] = '@'
+        elseif node == self.goal_node then
+            s[c] = '!'
+        elseif node.cost == 2 then
+            s[c] = '#'
+        elseif node.cost == 1 then
+            s[c] = ' '
+        else
+            s[c] = '?'
+        end
         c = c + 1
         if i % self.maze.dimensions[1] == 0 then
             s[c] = '\n'
@@ -67,9 +82,15 @@ function Maze:getNeighbors(index)
     -- TODO implement me
     return {}
 end
+
+-- Create a new node with the given cost, assign it an ID, and return it.
+-- This function should be called for each node in a new maze in left->right,
+-- top->bottom order, because the ID will later be used to determine
+-- neighbors.
 function Maze:insertNode(cost)
     local node = Node:new(nil, #self.data, cost)
     table.insert(self.data, node)
+    return node
 end
 
 -------------------------------

@@ -19,15 +19,16 @@ describe('Lua Pathfinding demo', function()
   end)
 
   describe('SerDe', function()
-    it('01', function()
+    it('Identity function', function()
       -- Serializing a freshly-read test case produces the same input.
 
-      local testFile = "testdata/01a.txt"
-      local map = fromFile(testFile)
-      local serialized = map.serialize()
+      local testFile = "testdata/01a-basic.txt"
+      local astar = AStar:newFromFile(nil, "testdata/01a-basic.txt")
+      local serialized = astar:serialize()
 
       local f = io.open(testFile, "r")
-      local rawString = f.read()
+      local rawString = f:read("*all")
+      f:close()
 
       expect(serialized).to.equal(rawString)
     end)
@@ -35,12 +36,17 @@ describe('Lua Pathfinding demo', function()
 
   describe('End to end', function()
     it('01', function()
-      local map = astarmap.fromFile("testdata/01a.txt")
-      local solve = map.solve()
-      local serialized = solve.serialize()
+      local testFile = "testdata/01a-basic.txt"
+      local astar = AStar:newFromFile(nil, "testdata/01a-basic.txt")
+      astar:solve()
+      local serialized = astar:serialize()
+
+      local f = io.open(testFile, "r")
+      local solution = f:read("*all")
+      f:close()
 
       expect(serialized).to.be.a('string')
-      expect(estimate).to.equal(4)
+      expect(serialized).to.equal(solution)
     end)
 
   end)
