@@ -21,8 +21,6 @@ Where:
 
 ## TODO
 
-Some kind of class, probably? Or just a table
-
 Stuff that we need.
 
 Serde

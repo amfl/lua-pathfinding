@@ -2,6 +2,8 @@ AStar = {
     maze = nil,
     start_node = nil,
     goal_node = nil,
+    open_list = nil,     -- Unvisited node refs
+    closed_list = nil,   -- Visited node refs
 }
 
 -------------------------------
@@ -39,6 +41,22 @@ function AStar:newFromFile(o, filename)
 end
 
 function AStar:solve()
+    self.open_list = {self.start_node}
+    self.closed_list = {}
+
+    -- loop:
+    --   sort the open list by f value
+    --   Take the lowest:
+    --     Switch it to closed list
+    --     For each neighbour:
+    --       If it is not walkable or if it is on the closed list (we've already visited it), ignore it. Otherwise...
+    --       If it isn't on the open list, add it to the open list. Make the current node the parent of this node. Record F, G, and H costs.
+    --       If it is already on the open list, check to see if this path to that square is better, using G cost as the measure. A lower G means that this is a better path. If so, change the parent to this square, and recalculate G and F scores. (If you are keeping the open list sorted by F score, you may need to resort the list to account for the change.)
+    --     Stop when:
+    --       You add the target node to the closed list (found the path!)
+    --       Fail to find target node, and the open list is empty. (No path :c)
+    -- Now walk backwards down parents.
+
     return nil
 end
 
