@@ -1,6 +1,7 @@
 # Pathfinding in Lua
 
 - Intentionally no fancy graphical UI
+- Test suite with https://github.com/bjornbytes/lust
 
 ## Usage
 

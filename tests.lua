@@ -34,10 +34,26 @@ describe('Lua Pathfinding demo', function()
     end)
   end)
 
+  -- Lots of duplication here for now :D
   describe('End to end', function()
     it('01', function()
       local testInput = "testdata/01a-basic.txt"
       local testSolution = "testdata/01b-basic.txt"
+      local astar = AStar:newFromFile(nil, testInput)
+      astar:solve()
+      local serialized = astar:serialize()
+
+      local f = io.open(testSolution, "r")
+      local solution = f:read("*all")
+      f:close()
+
+      expect(serialized).to.be.a('string')
+      expect(serialized).to.equal(solution)
+    end)
+
+    it('02', function()
+      local testInput = "testdata/02a.txt"
+      local testSolution = "testdata/02b.txt"
       local astar = AStar:newFromFile(nil, testInput)
       astar:solve()
       local serialized = astar:serialize()
