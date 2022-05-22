@@ -8,11 +8,11 @@ AStar = {
 -- Serialization/Deserialization logic
 
 function AStar:newFromFile(o, filename)
-    o = o or {}
+    local o = o or {}
     setmetatable(o, self)
     self.__index = self
 
-    self.maze = Maze:new()
+    o.maze = Maze:new()
 
     -- Iterate over file and populate the maze data.
     -- This doesn't have to be fast, it's just for testing.
@@ -22,7 +22,7 @@ function AStar:newFromFile(o, filename)
         for i = 1, #line do
             local c = line:sub(i,i)
             local cost = c == '#' and 2 or 1
-            local node = self.maze:insertNode(cost)
+            local node = o.maze:insertNode(cost)
 
             if c == '@' then
                 self.start_node = node
@@ -30,12 +30,16 @@ function AStar:newFromFile(o, filename)
                 self.goal_node = node
             end
         end
-        self.maze.dimensions[1] = #line
+        o.maze.dimensions[1] = #line
     end
 
-    self.maze.dimensions[2] = num_lines
+    o.maze.dimensions[2] = num_lines
 
-    return self
+    return o
+end
+
+function AStar:solve()
+    return nil
 end
 
 -- This code is truly awful because I don't know the best way to have a
@@ -69,13 +73,17 @@ end
 -------------------------------
 
 Maze = {
-    data = {},
-    dimensions = {},
+    data = nil,
+    dimensions = nil,
 }
 function Maze:new(o)
-    o = o or {}
+    local o = o or {}
     setmetatable(o, self)
     self.__index = self
+
+    o.data = {}
+    o.dimensions = {}
+
     return o
 end
 function Maze:getNeighbors(index)
