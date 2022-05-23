@@ -54,6 +54,15 @@ describe('Lua Pathfinding demo', function()
       end
 
     end)
+    it ('Can determine coordinates when given an index', function()
+      local testInput = "testdata/01a-basic.txt"
+      local astar = AStar:newFromFile(nil, testInput)
+
+      local index = astar.start_node.index
+
+      local coords = astar.maze:getCoords(index)
+      expect(coords).to.equal({3, 2})
+    end)
   end)
 
   -- Lots of duplication here for now :D

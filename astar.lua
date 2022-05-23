@@ -123,15 +123,18 @@ function Maze:new(o)
     return o
 end
 function Maze:getNeighbors(index)
-    -- local i = math.floor(index / self.dimensions[1])
-    -- local j = index % self.dimensions[1]
-
     -- TODO WARNING: There's no bounds checking here!
     return {
         self.data[index-1],
         self.data[index+1],
         self.data[index-self.dimensions[1]],
         self.data[index+self.dimensions[1]],
+    }
+end
+function Maze:getCoords(index)
+    return {
+        index % self.dimensions[1],                  -- x
+        math.floor(index / self.dimensions[1]) + 1,  -- y
     }
 end
 
