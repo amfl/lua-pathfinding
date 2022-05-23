@@ -114,7 +114,7 @@ end
 -- top->bottom order, because the ID will later be used to determine
 -- neighbors.
 function Maze:insertNode(cost)
-    local node = Node:new(nil, #self.data, cost)
+    local node = Node:new(nil, #self.data + 1, cost)
     table.insert(self.data, node)
     return node
 end
