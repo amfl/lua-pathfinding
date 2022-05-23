@@ -25,7 +25,7 @@ function AStar:newFromFile(o, filename)
         num_lines = num_lines + 1
         for i = 1, #line do
             local c = line:sub(i,i)
-            local cost = c == '#' and 2 or 1
+            local cost = c == '#' and -1 or 1
             local node = o.maze:insertNode(cost)
 
             if c == '@' then
@@ -76,7 +76,7 @@ function AStar:solve()
         for _, neighbor in ipairs(self.maze:getNeighbors(n.index)) do
             -- If it is not walkable or if it is on the closed list (we've already visited it), ignore it.
             -- Lua has no `continue` statement (!?)
-            if neighbor.cost ~= math.huge and
+            if neighbor.cost ~= -1 and
                     not table.contains(self.closed_list, neighbor) then
 
                 -- Update heuristic if required
@@ -131,7 +131,7 @@ function AStar:serialize()
             s[c] = '!'
         elseif node.on_path then
             s[c] = '+'
-        elseif node.cost == 2 then
+        elseif node.cost == -1 then
             s[c] = '#'
         elseif node.cost == 1 then
             s[c] = ' '
