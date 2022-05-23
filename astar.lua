@@ -58,7 +58,7 @@ function AStar:solve()
     while #self.open_list > 0 do -- TODO proper condition
         -- sort the open list by f value
         table.sort(self.open_list, function(n1, n2)
-            return n1.f < n2.f
+            return n1.f > n2.f
         end)
 
         -- Take the lowest:
@@ -77,7 +77,7 @@ function AStar:solve()
             -- If it is not walkable or if it is on the closed list (we've already visited it), ignore it.
             -- Lua has no `continue` statement (!?)
             if neighbor.cost ~= math.huge and
-                    not table.contains(self.closed, neighbor) then
+                    not table.contains(self.closed_list, neighbor) then
 
                 -- Update heuristic if required
                 if neighbor.h == math.huge then
@@ -87,7 +87,7 @@ function AStar:solve()
                 -- Path cost of arriving at the neighbor this way
                 local g = n.g + neighbor.cost
 
-                if table.contains(self.open, neighbor) then
+                if table.contains(self.open_list, neighbor) then
                 -- If the neighbor is already on the open list, check to see if this path to that square is better, using G cost as the measure. A lower G means that this is a better path. If so, change the parent to this square, and recalculate G and F scores. (If you are keeping the open list sorted by F score, you may need to resort the list to account for the change.)
                     if g < neighbor.g then
                         neighbor.parent = n
@@ -104,7 +104,16 @@ function AStar:solve()
             end
         end
     end
-    -- Now walk backwards down parents.
+
+    -- If we have a solution...
+    if self.goal_node.parent ~= nil then
+        -- Walk backwards down parents to reveal the final path.
+        local n = self.goal_node
+        repeat
+            n = n.parent
+            n.on_path = true
+        until n.parent == nil
+    end
 
     return nil
 end
@@ -120,6 +129,8 @@ function AStar:serialize()
             s[c] = '@'
         elseif node == self.goal_node then
             s[c] = '!'
+        elseif node.on_path then
+            s[c] = '+'
         elseif node.cost == 2 then
             s[c] = '#'
         elseif node.cost == 1 then
@@ -188,6 +199,9 @@ Node = {
     g = math.huge,     -- Distance between the current node and the start node.
     h = math.huge,     -- Heuristic - estimated distance from the current node to the end node.
     f = math.huge,     -- Total cost of the node. f = g + h, but we record it as a kind of cache.
+
+    on_path = false,   -- Whether this node is on the most final, optimal path to the goal.
+                       -- Used only for rendering output. Not important for algorithm.
 }
 function Node:new(o, index, cost)
     o = o or {}
