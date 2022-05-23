@@ -175,7 +175,7 @@ end
 -------------------------------
 
 -- Path cost heuristic (estimation) function: Manhattan distance
-function h(source_node, dest_node)
+function manhattan(source_node, dest_node)
     return math.abs(source_node[1] - dest_node[1]) +
            math.abs(source_node[2] - dest_node[2])
 end

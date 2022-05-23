@@ -12,7 +12,7 @@ describe('Lua Pathfinding demo', function()
 
   describe('Estimation', function() -- Can be nested
     it('Simple Manhattan', function()
-      local estimate = h({1,1}, {3,3})
+      local estimate = manhattan({1,1}, {3,3})
       expect(estimate).to.be.a('number')
       expect(estimate).to.equal(4)
     end)
