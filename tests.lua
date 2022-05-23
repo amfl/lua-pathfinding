@@ -1,5 +1,6 @@
 require "./lust"
 require "./astar"
+require "./util"
 
 local lust = require 'lust'
 local describe, it, expect = lust.describe, lust.it, lust.expect
@@ -10,6 +11,15 @@ describe('Lua Pathfinding demo', function()
     -- This gets run before every test.
   end)
 
+  describe('Utils', function()
+    it('Can check if values exist in a table', function()
+        local t = {4,7,5,2}
+
+        expect(table.contains(t, 4)).to.equal(true)
+        expect(table.contains(t, 5)).to.equal(true)
+        expect(table.contains(t, 6)).to.equal(false)
+    end)
+  end)
   describe('Estimation', function() -- Can be nested
     it('Simple Manhattan', function()
       local estimate = manhattan({1,1}, {3,3})

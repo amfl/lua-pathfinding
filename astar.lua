@@ -1,3 +1,5 @@
+require "util"
+
 AStar = {
     maze = nil,
     start_node = nil,
@@ -44,11 +46,16 @@ function AStar:solve()
     self.open_list = {self.start_node}
     self.closed_list = {}
 
-    -- loop:
-    --   Stop when:
+    self.start_node.g = 0 -- TODO maybe this should be in constructor?
+                          -- Better - Passed into this function.
+
+    -- Cache goal coords. Used for checking heuristic.
+    local goal_coords = self.maze:getCoords(self.goal_node.index)
+
+    -- loop stop when:
     --     You add the target node to the closed list (found the path!)
     --     Fail to find target node, and the open list is empty. (No path :c)
-    while false do -- TODO proper condition
+    while #self.open_list > 0 do -- TODO proper condition
         -- sort the open list by f value
         table.sort(self.open_list, function(n1, n2)
             return n1.f < n2.f
@@ -57,23 +64,47 @@ function AStar:solve()
         -- Take the lowest:
         local n = table.remove(self.open_list)
 
+        if n == self.goal_node then
+            -- Found the path!
+            break
+        end
+
         --   Switch it to closed list
         table.insert(self.closed_list, n)
 
         -- For each neighbor:
-        for neighbor in self.maze:getNeighbors(n.index) do
+        for _, neighbor in ipairs(self.maze:getNeighbors(n.index)) do
             -- If it is not walkable or if it is on the closed list (we've already visited it), ignore it.
             -- Lua has no `continue` statement (!?)
             if neighbor.cost ~= math.huge and
-                table.contains(self.closed, neighbor) then
+                    not table.contains(self.closed, neighbor) then
 
-        --     If it isn't on the open list, add it to the open list. Make the current node the parent of this node. Record F, G, and H costs.
-        --     If it is already on the open list, check to see if this path to that square is better, using G cost as the measure. A lower G means that this is a better path. If so, change the parent to this square, and recalculate G and F scores. (If you are keeping the open list sorted by F score, you may need to resort the list to account for the change.)
-        -- Now walk backwards down parents.
+                -- Update heuristic if required
+                if neighbor.h == math.huge then
+                    neighbor.h = manhattan(goal_coords, self.maze:getCoords(neighbor.index))
+                end
+
+                -- Path cost of arriving at the neighbor this way
+                local g = n.g + neighbor.cost
+
+                if table.contains(self.open, neighbor) then
+                -- If the neighbor is already on the open list, check to see if this path to that square is better, using G cost as the measure. A lower G means that this is a better path. If so, change the parent to this square, and recalculate G and F scores. (If you are keeping the open list sorted by F score, you may need to resort the list to account for the change.)
+                    if g < neighbor.g then
+                        neighbor.parent = n
+                        neighbor.g = g
+                        neighbor.f = neighbor.g + neighbor.h
+                    end
+                else
+                -- If the neighbor isn't on the open list, add it to the open list. Make the current node the parent of this node. Record F, G, and H costs.
+                    table.insert(self.open_list, neighbor)
+                    neighbor.parent = n
+                    neighbor.g = g
+                    neighbor.f = neighbor.g + neighbor.h
+                end
             end
         end
-
     end
+    -- Now walk backwards down parents.
 
     return nil
 end
@@ -154,9 +185,9 @@ Node = {
     index = -1,        -- Unique index of this node in the maze
     cost = math.huge,  -- Cost for moving onto this node
     parent = nil,      -- Reference to the node we used to get here
-    g = math.huge,
-    h = math.huge,
-    f = math.huge,
+    g = math.huge,     -- Distance between the current node and the start node.
+    h = math.huge,     -- Heuristic - estimated distance from the current node to the end node.
+    f = math.huge,     -- Total cost of the node. f = g + h, but we record it as a kind of cache.
 }
 function Node:new(o, index, cost)
     o = o or {}
