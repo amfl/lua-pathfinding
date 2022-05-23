@@ -45,6 +45,9 @@ function AStar:solve()
     self.closed_list = {}
 
     -- loop:
+    --   Stop when:
+    --     You add the target node to the closed list (found the path!)
+    --     Fail to find target node, and the open list is empty. (No path :c)
     while false do -- TODO proper condition
         -- sort the open list by f value
         table.sort(self.open_list, function(n1, n2)
@@ -57,14 +60,18 @@ function AStar:solve()
         --   Switch it to closed list
         table.insert(self.closed_list, n)
 
-        --   For each neighbour:
-        --     If it is not walkable or if it is on the closed list (we've already visited it), ignore it. Otherwise...
+        -- For each neighbor:
+        for neighbor in self.maze:getNeighbors(n.index) do
+            -- If it is not walkable or if it is on the closed list (we've already visited it), ignore it.
+            -- Lua has no `continue` statement (!?)
+            if neighbor.cost ~= math.huge and
+                table.contains(self.closed, neighbor) then
+
         --     If it isn't on the open list, add it to the open list. Make the current node the parent of this node. Record F, G, and H costs.
         --     If it is already on the open list, check to see if this path to that square is better, using G cost as the measure. A lower G means that this is a better path. If so, change the parent to this square, and recalculate G and F scores. (If you are keeping the open list sorted by F score, you may need to resort the list to account for the change.)
-        --   Stop when:
-        --     You add the target node to the closed list (found the path!)
-        --     Fail to find target node, and the open list is empty. (No path :c)
         -- Now walk backwards down parents.
+            end
+        end
 
     end
 
