@@ -7,10 +7,6 @@ local describe, it, expect = lust.describe, lust.it, lust.expect
 
 describe('Lua Pathfinding demo', function()
 
-  lust.before(function()
-    -- This gets run before every test.
-  end)
-
   describe('Utils', function()
     it('Can check if values exist in a table', function()
         local t = {4,7,5,2}
@@ -32,7 +28,7 @@ describe('Lua Pathfinding demo', function()
     it('Identity function', function()
       -- Serializing a freshly-read test case produces the same input.
 
-      local testInput = "testdata/01a-basic.txt"
+      local testInput = "testdata/01a.txt"
       local astar = AStar:newFromFile(nil, testInput)
       local serialized = astar:serialize()
 
@@ -45,10 +41,14 @@ describe('Lua Pathfinding demo', function()
   end)
 
   describe('Maze', function()
-    it('Can calculate neighbors', function()
-      local testInput = "testdata/01a-basic.txt"
-      local astar = AStar:newFromFile(nil, testInput)
+    local astar = nil
 
+    lust.before(function()
+      local testInput = "testdata/01a.txt"
+      astar = AStar:newFromFile(nil, testInput)
+    end)
+
+    it('Can calculate neighbors', function()
       local index = astar.start_node.index
       expect(index).to.equal(11)
 
@@ -64,18 +64,12 @@ describe('Lua Pathfinding demo', function()
       end
     end)
     it('Can calculate neighbors around bounds', function()
-      local testInput = "testdata/01a-basic.txt"
-      local astar = AStar:newFromFile(nil, testInput)
-
       neighbors = astar.maze:getNeighbors(1)
       expect(#neighbors).to.equal(2)
       expect(neighbors).to.have(2)
       expect(neighbors).to.have(9)
     end)
     it ('Can determine coordinates when given an index', function()
-      local testInput = "testdata/01a-basic.txt"
-      local astar = AStar:newFromFile(nil, testInput)
-
       local index = astar.start_node.index
 
       local coords = astar.maze:getCoords(index)
