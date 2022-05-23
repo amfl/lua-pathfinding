@@ -52,7 +52,15 @@ describe('Lua Pathfinding demo', function()
           local neighbor = astar.maze.data[id]
           expect(neighbors).to.have(neighbor)
       end
+    end)
+    it('Can calculate neighbors around bounds', function()
+      local testInput = "testdata/01a-basic.txt"
+      local astar = AStar:newFromFile(nil, testInput)
 
+      neighbors = astar.maze:getNeighbors(1)
+      expect(#neighbors).to.equal(2)
+      expect(neighbors).to.have(2)
+      expect(neighbors).to.have(9)
     end)
     it ('Can determine coordinates when given an index', function()
       local testInput = "testdata/01a-basic.txt"
