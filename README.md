@@ -1,12 +1,32 @@
 # Pathfinding in Lua
 
+A simple exploration of A* pathfinding algorithm in lua.
+Built as a learning exercise.
+
 - Intentionally no fancy graphical UI
 - Test suite with https://github.com/bjornbytes/lust
 
 ## Usage
 
 ```sh
+# Run tests
 lua tests.lua
+
+# Run example program using test data
+lua main.lua
+##########################
+#    #   #    #     #    #
+#    #   #               #
+#      @ #  ++++++++++   #
+#  +++++ #  + #  ####+   #
+## +######  + #   #  ++  #
+#  ++++++++++ #   #  #+# #
+###############   #   +  #
+#             ##  #   +  #
+#     +++     # ######+  #
+#   !++#+++++++++++++++  #
+#      #                 #
+##########################
 ```
 
 ## A* Notes
@@ -20,12 +40,7 @@ Where:
 - g(n) is path cost
 - h(n) is heuristic (estimated) path cost
 
-## TODO
-
-Stuff that we need.
-
-Serde
-Text file -> Maze, which contains nodes.
+## Implementation Notes
 
 AStar(maze, source_ref, goal_ref):
 
@@ -35,7 +50,7 @@ AStar(maze, source_ref, goal_ref):
 - Goal node ref
 - Maze ref
 
-- Serde functions (Or they can act upon AStar)
+- Serde functions
 
 Maze:
 
@@ -47,5 +62,5 @@ Container for nodes. "Owns" them.
 Nodes:
 
 - Parent (How we got to this node)
-- ~Coords~  Index (Maze knows how to translate index <-> coords because it knows dimensions)
+- Index (Maze knows how to translate index <-> coords because it knows dimensions)
 - f, g, h (but f is entirely derived)

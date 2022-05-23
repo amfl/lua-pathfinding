@@ -55,7 +55,7 @@ function AStar:solve()
     -- loop stop when:
     --     You add the target node to the closed list (found the path!)
     --     Fail to find target node, and the open list is empty. (No path :c)
-    while #self.open_list > 0 do -- TODO proper condition
+    while #self.open_list > 0 do
         -- sort the open list by f value
         table.sort(self.open_list, function(n1, n2)
             return n1.f > n2.f
