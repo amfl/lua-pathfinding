@@ -34,6 +34,28 @@ describe('Lua Pathfinding demo', function()
     end)
   end)
 
+  describe('Maze', function()
+    it('Can calculate neighbors', function()
+      local testInput = "testdata/01a-basic.txt"
+      local astar = AStar:newFromFile(nil, testInput)
+
+      local index = astar.start_node.index
+      expect(index).to.equal(11)
+
+      neighbors = astar.maze:getNeighbors(index)
+
+      expect(neighbors).to.be.a('table')
+      expect(#neighbors).to.equal(4)
+
+      local neighborIds = {10, 12, 3, 19}
+      for _, id in ipairs(neighborIds) do
+          local neighbor = astar.maze.data[id]
+          expect(neighbors).to.have(neighbor)
+      end
+
+    end)
+  end)
+
   -- Lots of duplication here for now :D
   describe('End to end', function()
     it('01', function()

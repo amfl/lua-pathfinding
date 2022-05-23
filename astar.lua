@@ -45,17 +45,28 @@ function AStar:solve()
     self.closed_list = {}
 
     -- loop:
-    --   sort the open list by f value
-    --   Take the lowest:
-    --     Switch it to closed list
-    --     For each neighbour:
-    --       If it is not walkable or if it is on the closed list (we've already visited it), ignore it. Otherwise...
-    --       If it isn't on the open list, add it to the open list. Make the current node the parent of this node. Record F, G, and H costs.
-    --       If it is already on the open list, check to see if this path to that square is better, using G cost as the measure. A lower G means that this is a better path. If so, change the parent to this square, and recalculate G and F scores. (If you are keeping the open list sorted by F score, you may need to resort the list to account for the change.)
-    --     Stop when:
-    --       You add the target node to the closed list (found the path!)
-    --       Fail to find target node, and the open list is empty. (No path :c)
-    -- Now walk backwards down parents.
+    while false do -- TODO proper condition
+        -- sort the open list by f value
+        table.sort(self.open_list, function(n1, n2)
+            return n1.f < n2.f
+        end)
+
+        -- Take the lowest:
+        local n = table.remove(self.open_list)
+
+        --   Switch it to closed list
+        table.insert(self.closed_list, n)
+
+        --   For each neighbour:
+        --     If it is not walkable or if it is on the closed list (we've already visited it), ignore it. Otherwise...
+        --     If it isn't on the open list, add it to the open list. Make the current node the parent of this node. Record F, G, and H costs.
+        --     If it is already on the open list, check to see if this path to that square is better, using G cost as the measure. A lower G means that this is a better path. If so, change the parent to this square, and recalculate G and F scores. (If you are keeping the open list sorted by F score, you may need to resort the list to account for the change.)
+        --   Stop when:
+        --     You add the target node to the closed list (found the path!)
+        --     Fail to find target node, and the open list is empty. (No path :c)
+        -- Now walk backwards down parents.
+
+    end
 
     return nil
 end
@@ -105,8 +116,16 @@ function Maze:new(o)
     return o
 end
 function Maze:getNeighbors(index)
-    -- TODO implement me
-    return {}
+    -- local i = math.floor(index / self.dimensions[1])
+    -- local j = index % self.dimensions[1]
+
+    -- TODO WARNING: There's no bounds checking here!
+    return {
+        self.data[index-1],
+        self.data[index+1],
+        self.data[index-self.dimensions[1]],
+        self.data[index+self.dimensions[1]],
+    }
 end
 
 -- Create a new node with the given cost, assign it an ID, and return it.
@@ -125,8 +144,9 @@ Node = {
     index = -1,        -- Unique index of this node in the maze
     cost = math.huge,  -- Cost for moving onto this node
     parent = nil,      -- Reference to the node we used to get here
-    g = nil,
-    h = nil,
+    g = math.huge,
+    h = math.huge,
+    f = math.huge,
 }
 function Node:new(o, index, cost)
     o = o or {}
@@ -135,6 +155,9 @@ function Node:new(o, index, cost)
 
     o.index = index
     o.cost = cost or 0
+    o.g = math.huge
+    o.h = math.huge
+    o.f = math.huge
 
     return o
 end
