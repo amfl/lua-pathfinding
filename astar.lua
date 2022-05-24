@@ -220,8 +220,3 @@ function manhattan(source_node, dest_node)
     return math.abs(source_node[1] - dest_node[1]) +
            math.abs(source_node[2] - dest_node[2])
 end
-
--- Path cost function
-function g(node)
-    return 4
-end
