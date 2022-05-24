@@ -118,34 +118,30 @@ function AStar:solve()
     return nil
 end
 
--- This code is truly awful because I don't know the best way to have a
--- stringbuffer in lua
 function AStar:serialize()
-    local s = {}
-    local c = 1
+    local s = ""
 
     for i, node in ipairs(self.maze.data) do
         if node == self.start_node then
-            s[c] = '@'
+            s = s .. "@"
         elseif node == self.goal_node then
-            s[c] = '!'
+            s = s .. '!'
         elseif node.on_path then
-            s[c] = '+'
+            s = s .. '+'
         elseif node.cost == -1 then
-            s[c] = '#'
+            s = s .. '#'
         elseif node.cost == 1 then
-            s[c] = ' '
+            s = s .. ' '
         else
-            s[c] = '?'
+            s = s .. '?'
         end
-        c = c + 1
+
         if i % self.maze.dimensions[1] == 0 then
-            s[c] = '\n'
-            c = c + 1
+            s = s .. '\n'
         end
     end
 
-    return table.concat(s)
+    return s
 end
 
 -------------------------------
